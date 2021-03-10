@@ -5,10 +5,11 @@
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.48")
+(defconst quack-version      "0.50")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
+;; Updated to 0.50 by Pierre Rouleau <prouleau001@gmail.com>
 
 (defconst quack-legal-notice
   "This is free software; you can redistribute it and/or modify it under the
@@ -106,6 +107,11 @@ please contact Neil Van Dyke.")
 ;;     documentation navigation interface.)
 
 ;; HISTORY:
+;;     Version 0.50 (2121-03-10):  from Pierre Rouleau:
+;;         * Fixed byte-compiler warnings on Emacs 26.3:
+;;           - use mapc instead of mapcar when only used for side effect,
+;;           - use (delete-char -1) instead of (delete-backward-char 1),
+;;         * removed trailing whitespace.
 ;;
 ;;     Version 0.49 (2018-10-28):
 ;;         * Removed reference to `scheme-announce' email list.
