@@ -111,7 +111,8 @@ please contact Neil Van Dyke.")
 ;;         * Fixed byte-compiler warnings on Emacs 26.3:
 ;;           - use mapc instead of mapcar when only used for side effect,
 ;;           - use (delete-char -1) instead of (delete-backward-char 1),
-;;         * removed trailing whitespace.
+;;         * Removed trailing whitespace.
+;;         * Updated Gambit home page.
 ;;
 ;;     Version 0.49 (2018-10-28):
 ;;         * Removed reference to `scheme-announce' email list.
@@ -625,7 +626,7 @@ If non-nil, overrides that variable for URLs viewed by `quack-browse-url'."
 
     (gambit
      "Gambit-C home page"
-     "http://www.iro.umontreal.ca/~gambit/")
+     "https://www.iro.umontreal.ca/~gambit/doc/gambit.html")
 
     (gauche
      "Gauche Reference Manual"
