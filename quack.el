@@ -78,7 +78,7 @@ please contact Neil Van Dyke.")
 ;;     GNU/Linux distributions and is available for most other platforms.
 ;;
 ;;     Note to PLT Scheme users: If you do not already have the PLT manuals
-;;     installed, they can be downloaded from 
+;;     installed, they can be downloaded from
 ;;     `http://download.plt-scheme.org/doc/' and installed in your PLT `doc'
 ;;     collection.  If Quack is not finding installed PLT manuals, then be sure
 ;;     that the `quack-pltcollect-dirs' variable contains the appropriate
@@ -247,7 +247,7 @@ please contact Neil Van Dyke.")
 ;;         * Made `quack-pltish-keywords-to-fontify' and
 ;;           `quack-emacs-keywords-to-fontify' custom changes update
 ;;           immediately.  Bug reported by Taylor Campbell.
-;;         * Removed some non-syntax names from  
+;;         * Removed some non-syntax names from
 ;;           `quack-pltish-keywords-to-fontify'.
 ;;         * Documentation changes.
 ;;
@@ -280,7 +280,7 @@ please contact Neil Van Dyke.")
 ;;         * Added indent and fontify for additional PLT syntax.
 ;;         * Added `quack-fontify-threesemi-p'.
 ;;         * `quack-tidy-buffer' sets `fill-prefix' to nil when running.
-;;         * Added messages to `run-scheme', if only to get rid of annoying 
+;;         * Added messages to `run-scheme', if only to get rid of annoying
 ;;           "Mark set" message.
 ;;         * Added "mzscheme -M errortrace" to `quack-programs'.
 ;;         * `quack-dired-pltcollect' prompt defaults to `mzlib'.
@@ -832,7 +832,7 @@ This only has effect when `quack-fontify-style' is `plt'."
     "namespace-variable-bind/invoke-unit/sig" "parameterize" "parameterize*"
     "parameterize-break" "private"
     "private*" "protect" "provide" "provide-signature-elements"
-    "provide/contract" "public" "public*" "quasiquote" 
+    "provide/contract" "public" "public*" "quasiquote"
     "quasisyntax" "quasisyntax/loc" "quote" "receive"
     "rename" "require" "require-for-syntax" "send" "send*" "set!" "set!-values"
     "signature->symbols" "super-instantiate" "syntax" "syntax/loc"
@@ -1782,21 +1782,21 @@ For PLT-style when `quack-pltish-fontify-keywords-p' is non-nil."
       (quack-activity
        "Scanning PLT collection directories"
        (let ((result '()))
-         (mapcar (function
-                  (lambda (dir)
-                    (mapcar (function
-                             (lambda (subdir)
-                               (unless (member subdir '("." ".." "CVS" "RCS"))
-                                 (let ((subdir-path (expand-file-name subdir
-                                                                      dir)))
-                                   (when (file-directory-p subdir-path)
-                                     (setq result
-                                           (cons (cons subdir subdir-path)
-                                                 result)))))))
-                            (condition-case nil
-                                (directory-files dir)
-                              (file-error nil)))))
-                 quack-pltcollect-dirs)
+         (mapc (function
+                (lambda (dir)
+                  (mapcar (function
+                           (lambda (subdir)
+                             (unless (member subdir '("." ".." "CVS" "RCS"))
+                               (let ((subdir-path (expand-file-name subdir
+                                                                    dir)))
+                                 (when (file-directory-p subdir-path)
+                                   (setq result
+                                         (cons (cons subdir subdir-path)
+                                               result)))))))
+                          (condition-case nil
+                              (directory-files dir)
+                            (file-error nil)))))
+               quack-pltcollect-dirs)
          (setq quack-pltcollects-alist-cache (reverse result))))))
 
 (defun quack-dir-for-pltcollect (name)
@@ -1808,7 +1808,7 @@ For PLT-style when `quack-pltish-fontify-keywords-p' is non-nil."
          (default (if (assoc "mzlib" alist) "mzlib" nil))
          (dir (cdr (assoc
                     (completing-read
-                     (if default 
+                     (if default
                          (format "Dired for PLT collection (default %S): "
                                  default)
                        "Dired for PLT collection: ")
@@ -2018,7 +2018,7 @@ For PLT-style when `quack-pltish-fontify-keywords-p' is non-nil."
                                 open-pt (1+ open-pt))
                                0)))
           (when (= open-char other-open)
-            (delete-backward-char 1)
+            (delete-char -1)
             (insert other-close))))))
   (when blink-paren-function (funcall blink-paren-function)))
 
@@ -2315,11 +2315,11 @@ follows draft,since a final version supercedes a draft version).")
 
 (defun quack-download-srfi-subindex-files-if-missing ()
   (let ((missing '()))
-    (mapcar (function
-             (lambda (kind)
-               (unless (file-exists-p (quack-srfi-subindex-file kind))
-                 (setq missing (nconc missing (list kind))))))
-            quack-srfi-subindex-kinds)
+    (mapc (function
+           (lambda (kind)
+             (unless (file-exists-p (quack-srfi-subindex-file kind))
+               (setq missing (nconc missing (list kind))))))
+          quack-srfi-subindex-kinds)
     (when (and missing
                (y-or-n-p "Some cached SRFI subindexes are missing. Update? "))
       (quack-update-srfi-index))))
@@ -2339,16 +2339,16 @@ follows draft,since a final version supercedes a draft version).")
       (quack-download-srfi-subindex-files-if-missing))
 
     ;; Parse the index files, letting entries for successive states supercede.
-    (mapcar (function
-             (lambda (kind)
-               (mapcar (function
-                        (lambda (new)
-                          (let (old)
-                            (if (setq old (assq (car new) index))
-                                (setcdr old (cdr new))
-                              (setq index (cons new index))))))
-                       (quack-parse-srfi-subindex-file kind noninteractive))))
-            quack-srfi-subindex-kinds)
+    (mapc (function
+           (lambda (kind)
+             (mapcar (function
+                      (lambda (new)
+                        (let (old)
+                          (if (setq old (assq (car new) index))
+                              (setcdr old (cdr new))
+                            (setq index (cons new index))))))
+                     (quack-parse-srfi-subindex-file kind noninteractive))))
+          quack-srfi-subindex-kinds)
 
     ;; Sort the parse form in reverse order, since the cache-building functions
     ;; will reverse this.
@@ -2361,36 +2361,36 @@ follows draft,since a final version supercedes a draft version).")
                             (length (number-to-string (car (car index)))))
                          "")
                        "d  %s")))
-      (mapcar (function
-               (lambda (n)
-                 (let ((num      (nth 0 n))
-                       (kind     (nth 1 n))
-                       (title    (nth 2 n)))
-                   (unless kind (quack-internal-error))
-                   (setq completes
-                         (cons (cons (if (eq kind 'final)
-                                         (format "%d  %s" num title)
-                                       (format "%d  [%s] %s" num kind title))
-                                     num)
-                               completes))
-                   (let ((pair (or (assq kind menu)
-                                   (quack-internal-error))))
-                     (setcdr pair (cons `[,(format fmt num title)
-                                          (quack-view-srfi ,num)]
-                                        (cdr pair)))))))
-              index))
+      (mapc (function
+             (lambda (n)
+               (let ((num (nth 0 n))
+                     (kind (nth 1 n))
+                     (title (nth 2 n)))
+                 (unless kind (quack-internal-error))
+                 (setq completes
+                       (cons (cons (if (eq kind 'final)
+                                       (format "%d  %s" num title)
+                                     (format "%d  [%s] %s" num kind title))
+                                   num)
+                             completes))
+                 (let ((pair (or (assq kind menu)
+                                 (quack-internal-error))))
+                   (setcdr pair (cons `[,(format fmt num title)
+                                        (quack-view-srfi ,num)]
+                                      (cdr pair)))))))
+            index))
 
     ;; Finish the menu.
-    (mapcar (function (lambda (n)
-                        (setcar n (cdr (assoc (car n)
-                                              '((draft     . "Draft")
-                                                (final     . "Final")
-                                                (withdrawn . "Withdrawn")))))
-                        ;; Add dummy content so that XEmacs 21 will display
-                        ;; the submenu label.
-                        (unless (cdr n)
-                          (setcdr n (cons "(None)" nil)))))
-            menu)
+    (mapc (function (lambda (n)
+                      (setcar n (cdr (assoc (car n)
+                                            '((draft . "Draft")
+                                              (final . "Final")
+                                              (withdrawn . "Withdrawn")))))
+                      ;; Add dummy content so that XEmacs 21 will display
+                      ;; the submenu label.
+                      (unless (cdr n)
+                        (setcdr n (cons "(None)" nil)))))
+          menu)
     (setq menu `(["Update SRFI Index" quack-update-srfi-index]
                  "---"
                  ,@menu
@@ -2765,25 +2765,25 @@ follows draft,since a final version supercedes a draft version).")
 
 (defun quack-docs-manual-keyword-lookup (keyword)
   (let ((results '()))
-    (mapcar (function
-             (lambda (doc)
-               (cond
-                ((not (quack-doc-get-kw-p doc)) nil)
-                ((not (quack-doc-get-kw-base-url doc))
-                 (quack-warning "Manual %S has no HTML."
-                                (quack-doc-get-sym doc)))
-                (t (let ((match (quack-doc-keyword-lookup doc keyword)))
-                     (cond
-                      ((not match) nil)
-                      ((vectorp match)
-                       (setq results (cons (cons doc match) results)))
-                      ((listp match)
-                       (mapcar (function
-                                (lambda (m)
-                                  (setq results (cons (cons doc m) results))))
-                               match))
-                      (t (quack-internal-error))))))))
-            (quack-docs))
+    (mapc (function
+           (lambda (doc)
+             (cond
+              ((not (quack-doc-get-kw-p doc)) nil)
+              ((not (quack-doc-get-kw-base-url doc))
+               (quack-warning "Manual %S has no HTML."
+                              (quack-doc-get-sym doc)))
+              (t (let ((match (quack-doc-keyword-lookup doc keyword)))
+                   (cond
+                    ((not match) nil)
+                    ((vectorp match)
+                     (setq results (cons (cons doc match) results)))
+                    ((listp match)
+                     (mapc (function
+                            (lambda (m)
+                              (setq results (cons (cons doc m) results))))
+                           match))
+                    (t (quack-internal-error))))))))
+          (quack-docs))
     (reverse results)))
 
 ;; Keyword Lookup Match Object:
@@ -2851,18 +2851,18 @@ follows draft,since a final version supercedes a draft version).")
 (defun quack-manuals-completes ()
   (when (eq quack-manuals-completes-cache 'invalid)
     (let ((completes '()))
-      (mapcar (function
-               (lambda (doc)
-                 (let ((sym (quack-doc-get-sym doc))
-                       ;;(url (quack-doc-get-start-url doc))
-                       )
-                   (setq completes
-                         (cons (cons (quack-doc-get-title doc) sym)
-                               ;;(cons (cons (symbol-name sym) sym)
-                                     completes
-                                     ;;)
-                                     )))))
-              (quack-docs))
+      (mapc (function
+             (lambda (doc)
+               (let ((sym (quack-doc-get-sym doc))
+                     ;;(url (quack-doc-get-start-url doc))
+                     )
+                 (setq completes
+                       (cons (cons (quack-doc-get-title doc) sym)
+                             ;;(cons (cons (symbol-name sym) sym)
+                             completes
+                             ;;)
+                             )))))
+            (quack-docs))
       (setq quack-manuals-completes-cache (reverse completes))))
   quack-manuals-completes-cache)
 
@@ -2895,13 +2895,13 @@ Can be used in your `~/.emacs' file something like this:
   ;;       called before then.
   (let ((result                 '())
         (quack-quiet-warnings-p t))
-    (mapcar (function
-             (lambda (doc)
-               (let ((url (quack-doc-get-start-url doc)))
-                 (when url
-                   (setq result (cons (cons (quack-doc-get-title doc) url)
-                                      result))))))
-            (quack-docs))
+    (mapc (function
+           (lambda (doc)
+             (let ((url (quack-doc-get-start-url doc)))
+               (when url
+                 (setq result (cons (cons (quack-doc-get-title doc) url)
+                                    result))))))
+          (quack-docs))
     result))
 
 ;; Keyword Docs Viewing:
@@ -2949,7 +2949,7 @@ Can be used in your `~/.emacs' file something like this:
 (defun quack-prompt-for-kwmatch-choice (prompt kwmatch-list)
   (let ((completes '()))
     ;; Build the completion alist, ensure each key is unique.
-    (mapcar
+    (mapc
      (function
       (lambda (kwmatch)
         (let* ((kw         (quack-kwmatch-get-kw kwmatch))
@@ -3009,12 +3009,12 @@ Can be used in your `~/.emacs' file something like this:
 
 (defun quack-run-scheme-prompt-completion-collection ()
   (let ((program-list quack-programs))
-    (mapcar (function (lambda (program)
-                        (and program
-                             (not (member program program-list))
-                             (setq program-list (cons program program-list)))))
-            (list quack-default-program
-                  scheme-program-name))
+    (mapc (function (lambda (program)
+                      (and program
+                           (not (member program program-list))
+                           (setq program-list (cons program program-list)))))
+          (list quack-default-program
+                scheme-program-name))
     (mapcar (function (lambda (program) (cons program nil)))
             program-list)))
 
@@ -3059,7 +3059,7 @@ Can be used in your `~/.emacs' file something like this:
     (message "Switched to running Scheme: %s" scheme-program-name)))
 
 (defadvice scheme-interactively-start-process (around
-                                               quack-ad-sisp 
+                                               quack-ad-sisp
                                                first
                                                (&optional cmd)
                                                activate)
@@ -3141,10 +3141,10 @@ Can be used in your `~/.emacs' file something like this:
   (setq auto-mode-alist
         (append alist
                 (let ((retained '()))
-                  (mapcar (function (lambda (pair)
-                                      (unless (assoc (car pair) alist)
-                                        (setq retained (cons pair retained)))))
-                          auto-mode-alist)
+                  (mapc (function (lambda (pair)
+                                    (unless (assoc (car pair) alist)
+                                      (setq retained (cons pair retained)))))
+                        auto-mode-alist)
                   (reverse retained)))))
 
 (quack-add-auto-mode-alist '(("\\.ccl\\'"    . scheme-mode)
@@ -3501,8 +3501,8 @@ Can be used in your `~/.emacs' file something like this:
      ;;(mapcar (function (lambda (n)
      ;;(delete-menu-item '("Quack") n)
      ;;(add-submenu nil quack-global-menuspec "Help" n)))
-     ;;(list 
-     ;;;;current-menubar 
+     ;;(list
+     ;;;;current-menubar
      ;;default-menubar
      ;;))
      (delete-menu-item '("Quack") current-menubar)
@@ -3603,12 +3603,12 @@ Can be used in your `~/.emacs' file something like this:
             :style radio :selected ,selected-p])))
      programs)))
 
-(mapcar (function (lambda (sym) (put sym 'menu-enable 'mark-active)))
-        '(comment-region
-          indent-region
-          quack-uncomment-region
-          scheme-send-region
-          scheme-send-region-and-go))
+(mapc (function (lambda (sym) (put sym 'menu-enable 'mark-active)))
+      '(comment-region
+        indent-region
+        quack-uncomment-region
+        scheme-send-region
+        scheme-send-region-and-go))
 
 ;; Option Menu Callbacks:
 
@@ -3649,7 +3649,7 @@ Can be used in your `~/.emacs' file something like this:
   ;;           Updating Scheme Mode buffers...done
   ;;           Updating Scheme Mode buffers...done
   ;;           Loading ~/emacs/my-custom.el (source)...done
-  
+
   ;; Update dependent program state.
   (cond ((memq sym '(quack-emacsish-keywords-to-fontify
                      quack-fontify-style
@@ -4009,8 +4009,8 @@ Can be used in your `~/.emacs' file something like this:
                  (1 quack-threesemi-h1-face prepend))
                 ("^\;\;\; @subsection\\(?:\\[[^]]*\\]\\)?{\\([^\r\n]*\\)}"
                  (1 quack-threesemi-h2-face prepend))
-                
-                
+
+
                 )
             '()))
          (fld `(,(cond
@@ -4210,7 +4210,7 @@ Can be used in your `~/.emacs' file something like this:
 
 (defun quack-install-compilation-mode-stuff ()
   (unless quack-saved-compilation-error-regexp-alist
-    (setq quack-saved-compilation-error-regexp-alist 
+    (setq quack-saved-compilation-error-regexp-alist
           compilation-error-regexp-alist))
   (setq compilation-error-regexp-alist
         (append quack-compilation-error-regexp-alist-additions
@@ -4627,11 +4627,11 @@ Provided by Quack: http://www.neilvandyke.org/quack/"
 ;; TODO: Clickable URLs
 ;;
 ;; (defvar quack-url-keymap)
-;; 
+;;
 ;; (setq quack-url-keymap (make-sparse-keymap))
 ;; (define-key quack-url-keymap "\r" 'quack-browse-overlaid-url)
 ;; (define-key quack-url-keymap "q" 'quack-browse-overlaid-url)
-;; 
+;;
 ;; (defun quack-make-url-overlay (beg end &optional url)
 ;;   (let ((ovl (make-overlay beg end nil t)))
 ;;     (overlay-put ovl 'face      'underline)
@@ -4640,12 +4640,12 @@ Provided by Quack: http://www.neilvandyke.org/quack/"
 ;;     (overlay-put ovl 'quack-url
 ;;                      (or url (buffer-substring-no-properties beg end)))
 ;;     ovl))
-;; 
+;;
 ;; (defun quack-insert-url (url)
 ;;   (let* ((beg (point)))
 ;;     (insert url)
 ;;     (quack-make-url-overlay beg (point))))
-;; 
+;;
 ;; (defun quack-overlaid-url-at-point (&optional pt)
 ;;   (let ((overlays (overlays-at (or pt (point))))
 ;;         (url      nil))
@@ -4654,7 +4654,7 @@ Provided by Quack: http://www.neilvandyke.org/quack/"
 ;;                          (cdr overlays)
 ;;                        '())))
 ;;     url))
-;; 
+;;
 ;; (defun quack-browse-overlaid-url (pt)
 ;;   ;; Dehydration.
 ;;   (interactive "d")
@@ -4786,8 +4786,8 @@ Provided by Quack: http://www.neilvandyke.org/quack/"
 
 ;; TODO: Way to get default collects directories.  From Matthew Flatt,
 ;; 2006-04-22:
-;; 
-;; env PLTCOLLECTS="" mzscheme -mvqe '(printf "~s\n" (map path->string 
+;;
+;; env PLTCOLLECTS="" mzscheme -mvqe '(printf "~s\n" (map path->string
 ;; (current-library-collection-paths)))'
 
 ;; TODO: Have key binding to insert "lambda" (for use with pretty-lambda).
